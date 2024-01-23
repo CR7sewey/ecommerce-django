@@ -1,0 +1,14 @@
+1º
+Criar ambiente virtual e instal requirements
+
+2º
+django-admin startproject store . - criar projeto
+python manage.py startapp product
+python manage.py startapp orders
+python manage.py startapp profiles
+python manage.py migrate
+python manage.py createsuperuser
+
+3º
+settings, urls etc de definicoes
+middleware etc
