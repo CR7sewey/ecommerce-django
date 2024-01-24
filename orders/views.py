@@ -1,3 +1,22 @@
 from django.shortcuts import render
+from django.views import View
+from django.views.generic import ListView
+from django.http import HttpResponse, HttpRequest
+from typing import Any
+from orders.models import Order, ItemOrder
 
-# Create your views here.
+
+class Pay(View):
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        return HttpResponse('pagar')
+
+
+class FinishOrder(View):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        return HttpResponse('pagar')
+
+
+class Detail(View):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        return HttpResponse('pagar')
