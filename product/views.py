@@ -15,8 +15,14 @@ PER_PAGE = 9
 
 
 class ListProducts(ListView):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+    model = Product  # model a carregar
+    template_name = 'product/pages/lista.html'  # template a renderizar
+    # name with objects - in index is page_obj, aqui colide com o paginator
+    context_object_name = 'products'
+    ordering = '-id',
+    paginate_by = PER_PAGE
+    # paginator_class = Paginator  # - default
+    queryset = Product.objects.all()
 
 
 class DetailProducts(View):

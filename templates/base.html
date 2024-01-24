@@ -1,0 +1,19 @@
+{% include "partials/_head.html" %}
+
+<body>
+{% include "partials/_header.html" %}
+{% include "partials/_messages.html" %}
+
+    
+    <main class="container mt-4 mb-4">
+        {% block content %}{% endblock content %}
+        <div class="row mt-3">
+            <div class="col">
+        {% include "partials/_pagination.html" %}
+        </div>
+        </div>
+    </main>
+    {% include "partials/_footer.html" %}
+
+</body>
+</html>

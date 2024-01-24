@@ -1,6 +1,7 @@
 from django.db import models
 from utils.resizing import resize_image
 from utils.rands import slugify_new
+from utils.omfilters import formata_preco
 # from utils.price_format import
 
 # Create your models here.
@@ -36,11 +37,11 @@ class Product(models.Model):
     )
 
     def get_price_formated(self):
-        return f'E€ {self.marketing_price:.2f}'.replace('.', ',')
+        return formata_preco(self.marketing_price)
     get_price_formated.short_description = 'Price'
 
     def get_price_promotional_formated(self):
-        return f'E€ {self.marketing_price_promotion:.2f}'.replace('.', ',')
+        return formata_preco(self.marketing_price_promotion)
     get_price_promotional_formated.short_description = 'Price Promo.'
 
     def save(self, *args, **kwargs):
