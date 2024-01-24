@@ -35,7 +35,7 @@ class Order(models.Model):
         return f'Order: {self.pk}'
 
 
-class ItemOrder(models.Model):
+class ItemOrder(models.Model):  # o produto do pedido!
     class Meta:
         verbose_name = 'ItemOrder'
         verbose_name_plural = 'ItemOrders'
