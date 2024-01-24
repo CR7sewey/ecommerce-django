@@ -12,6 +12,8 @@ class VariationInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    list_display = 'name', 'get_price_formated',   \
+        'get_price_promotional_formated',
     inlines = VariationInline,
 
 

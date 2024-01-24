@@ -35,6 +35,14 @@ class Product(models.Model):
         )
     )
 
+    def get_price_formated(self):
+        return f'E€ {self.marketing_price:.2f}'.replace('.', ',')
+    get_price_formated.short_description = 'Price'
+
+    def get_price_promotional_formated(self):
+        return f'E€ {self.marketing_price_promotion:.2f}'.replace('.', ',')
+    get_price_promotional_formated.short_description = 'Price Promo.'
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_new(self.name)

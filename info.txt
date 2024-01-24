@@ -17,3 +17,5 @@ middleware etc
 product - models and stuff
 python manage.py makemigrations
 python manage.py migrate
+
+5º other models - see commits
