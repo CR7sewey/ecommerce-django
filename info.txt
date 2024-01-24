@@ -12,3 +12,8 @@ python manage.py createsuperuser
 3º
 settings, urls etc de definicoes
 middleware etc
+
+4º
+product - models and stuff
+python manage.py makemigrations
+python manage.py migrate
