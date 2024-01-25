@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic.list import ListView
 from django.views import View
 from product.models import Product, Variation
@@ -7,6 +7,7 @@ from django.views.generic.detail import DetailView
 from django.http import HttpResponse, HttpRequest
 from typing import Any
 from django.db.models.query import QuerySet
+from django.contrib import messages
 # Create your views here.
 
 # Create your views here.
@@ -49,9 +50,33 @@ class DetailProducts(DetailView):
         return queryset
 
 
-class AddToCart(View):
+class AddToCart(View):  # como é view temos de escrever metodos get e/ou post
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+        # messages.error(self.request, 'Erro')
+        # url anterior à atual!
+        http_referer = self.request.META.get('HTTP_REFERER',
+                                             reverse('product:lista'))
+        vid = self.request.GET.get('vid')
+        if not vid:
+            messages.error(self.request, 'Product doesn\'t exist!')
+            return redirect(http_referer)
+
+        variation = get_object_or_404(Variation, id=vid)
+
+        # criamos de se nao existir chave carrinh na sessao do user
+        if not self.request.session.get('cart'):
+            self.request.session['cart'] = {}
+            self.request.session.save()
+
+        cart = self.request.session['cart']
+        if vid in cart:
+            # TODO: Variacao existe no carrinho
+            pass
+        else:
+            # TODO: Variacao nao existe no carrinho
+            pass
+
+        return HttpResponse(variation.name)
 
 
 class RemoveFromCart(View):

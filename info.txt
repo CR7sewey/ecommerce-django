@@ -19,3 +19,8 @@ python manage.py makemigrations
 python manage.py migrate
 
 5º other models - see commits
+
+6º commits
+
+7º
+session - cookies, no lado do servidor (BD), unico para cada usurio
