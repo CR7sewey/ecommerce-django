@@ -73,7 +73,8 @@ class Variation(models.Model):
     promotion_price = models.FloatField(default=0)
     stock = models.PositiveIntegerField(default=1)
     # 1 Produto - many Variation
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,
+                                related_name="product_variation")  # para product.html!
 
     def __str__(self):
         return self.name or self.product.name

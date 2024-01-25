@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load omfilters %}
+{% block content %}
+    
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg">
+                        <div class="row no-gutters">
+                            <div class="col-lg-12">
+                            {% if product.image %}
+                            
+                                <img class="img-fluid" src="{{product.image.url}}" alt="{{product.name}}">
+                            
+                            {% endif %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="mt-4 mt-lg-0">
+                            <h1 class="h2">{{product.name}}</h1>
+                            <p class="lead">{{product.short_description}}</p>
+                            <p class="lead">
+                                {% if product.marketing_price_promotion %}
+                                <span id="variation-preco-promocional" class="lead product-price">{{product.marketing_price_promotion|formata_preco}}</span>
+                                <span id="variation-preco"
+                                    class="lead product-old-price text-muted">{{product.marketing_price|formata_preco}}</span>
+                                {% else %}
+                                <span id="variation-preco"
+                                    class="lead product-price">{{product.marketing_price|formata_preco}}</span>
+                                
+
+                                {% endif %}
+                            </p>
+
+                            <form action="{% url "product:addtocart" %}" id="form-add-to-cart">
+                                <div class="form-group">
+                                    {% comment "" %} muda preco com a variacao - javascript nos assets!!{% endcomment %}
+                                    <select id="select-variacoes" name="vid" class="form-control form-control-lg">
+                                        {% comment "" %} alteri models senao seria product.variation_set.all
+                                        ou seja a partir do produto queremos as variacoes mas o produtoesta na foreign key da variacao!{% endcomment %}
+                                        {% for variacao in product.product_variation.all %}
+                                        {% if variacao.promotion_price %}
+                                        <option data-preco="{{variacao.price|formata_preco}}" 
+                                        data-preco-promocional="{{variacao.promotion_price|formata_preco}}" value={{variacao.id}}>
+                                        {% if variacao.name %}
+                                            {{variacao.name}}
+                                            {% else %}
+                                            {{variacao}}
+                                            {% endif %}
+                                        </option>
+                                        {% else %}
+                                        <option data-preco="{{variacao.price|formata_preco}}" 
+                                        value={{variacao.id}}>
+                                        {% if variacao.name %}
+                                            {{variacao.name}}
+                                            {% else %}
+                                            {{variacao}}
+                                            {% endif %}
+                                        </option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                  
+                                </div>
+
+                                <div class="text-left">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                        Add to cart
+                                    </button>
+                                </div>
+
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mt-5 mb-5">
+                            <h2 class="text-center">{{product.name}}</h2>
+                            
+                              <p>{{product.long_description|linebreaks}} </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    
+    {% endblock content %}
