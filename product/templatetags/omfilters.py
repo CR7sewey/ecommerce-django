@@ -1,4 +1,5 @@
 from django.template import Library
+from utils import omfilters
 
 register = Library()
 
@@ -13,3 +14,8 @@ def formata_preco(val):
 @register.filter
 def cart_total_qtd(cart):
     return sum([item["quantity"] for item in cart.values()])
+
+
+@register.filter
+def cart_totals(cart):
+    return omfilters.cart_totals(cart)

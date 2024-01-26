@@ -24,3 +24,5 @@ python manage.py migrate
 
 7º
 session - cookies, no lado do servidor (BD) em formato json, unico para cada usurio
+
+8º commits ver

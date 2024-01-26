@@ -12,7 +12,7 @@ class Pay(View):
         return HttpResponse('pagar')
 
 
-class FinishOrder(View):
+class SaveOrder(View):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return HttpResponse('pagar')
 
