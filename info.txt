@@ -26,3 +26,6 @@ python manage.py migrate
 session - cookies, no lado do servidor (BD) em formato json, unico para cada usurio
 
 8º commits ver
+
+9º
+para o crispyforms - https://pypi.org/project/crispy-bootstrap4/
