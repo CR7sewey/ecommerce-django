@@ -133,14 +133,33 @@ class AddToCart(View):  # como é view temos de escrever metodos get e/ou post
 
 class RemoveFromCart(View):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+        http_referer = self.request.META.get('HTTP_REFERER',
+                                             reverse('product:lista'))
+        vid = self.request.GET.get('vid')  # id da variacao
+        if not vid:
+            return redirect(http_referer)
+
+        if not self.request.session.get("cart"):
+            return redirect(http_referer)
+
+        if vid not in self.request.session["cart"]:
+            return redirect(http_referer)
+
+        cart = self.request.session["cart"][vid]
+        messages.success(self.request, f"Product {cart["product_name"]}"
+                         f"{cart["variation_name"]}"
+                         "was removed from your cart!")
+        del self.request.session["cart"][vid]
+        self.request.session.save()
+        return redirect(http_referer)
 
 
 class Cart(View):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         # Nota: nao preciso de context pois a sessao navega connosco em todas as paginas
         # como se fosse um cookie
-        return render(self.request, "product/pages/cart.html")
+        context = {'cart': self.request.session.get('cart', {})}
+        return render(self.request, "product/pages/cart.html", context)
 
 
 class Finalise(View):
