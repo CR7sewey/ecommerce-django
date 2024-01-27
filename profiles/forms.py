@@ -14,11 +14,7 @@ class ProfileForm(forms.ModelForm):  # validacoes ja feitas no models!
         exclude = ('user',)
 
 
-class UserForm(forms.ModelForm):
-
-    def __init__(self, user=None, *args, **kwargs):  # if user already logged in
-        super().__init__(*args, **kwargs)
-        self.user = user
+class UserForm(forms.ModelForm):  # ta a fazer update e create
 
     # SIMILAR TO MODELS
     first_name = forms.CharField(
@@ -48,14 +44,18 @@ class UserForm(forms.ModelForm):
     password1 = forms.CharField(
         widget=forms.PasswordInput(),
         label='Password',
-        required=False
+        required=False  # false to update!
     )
 
     password2 = forms.CharField(
         widget=forms.PasswordInput(),
         label='Password confirmation',
-        required=False
+        required=False  # false to update!
     )
+
+    def __init__(self, user=None, *args, **kwargs):  # if user already logged in
+        super().__init__(*args, **kwargs)
+        self.user = user
 
     class Meta:
         model = User
@@ -82,7 +82,7 @@ class UserForm(forms.ModelForm):
         error_msg_password_short = 'The password needs at least 6 characters'
 
         # Usuários logados: atualização
-        if self.user:
+        if self.user:  # self.instance
             if user_db:
                 if user_data != user_db.username:
                     validation_error_msgs['username'] = error_msg_user_exists
@@ -101,7 +101,18 @@ class UserForm(forms.ModelForm):
 
         # Usuários não logados: cadastro
         else:
-            validation_error_msgs['username'] = error_msg_user_exists
+            if user_db:
+                validation_error_msgs['username'] = error_msg_user_exists
+
+            if email_db:
+                validation_error_msgs['email'] = error_msg_email_exists
+
+            if password_data != password2_data:
+                validation_error_msgs['password1'] = error_msg_password_match
+                validation_error_msgs['password2'] = error_msg_password_match
+
+            if len(password_data) < 6:
+                validation_error_msgs['password1'] = error_msg_password_short
 
         if validation_error_msgs:
             raise (ValidationError(validation_error_msgs))

@@ -11,7 +11,7 @@ class UserProfile(models.Model):
         verbose_name = 'UserProfile'
         verbose_name_plural = 'UserProfiles'
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     age = models.PositiveIntegerField()
     birth_date = models.DateField()
     cc = models.CharField(max_length=11)
