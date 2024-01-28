@@ -7,6 +7,7 @@ from . import models
 from . import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 import copy
 
 # Create your views here.
@@ -36,10 +37,9 @@ class BaseProfile(View):
             self.context = {'userform': forms.UserForm(data=request.POST or None,
                                                        user=request.user,
                                                        instance=request.user),
-                            'profileform': profile_form}
-            # forms.ProfileForm(
-            # data=request.POST or None,
-            # instance=self.perfil)}
+                            'profileform': forms.ProfileForm(
+                                data=request.POST or None,
+                instance=self.perfil)}
 
         else:
             self.context = {'userform': user_form,
@@ -47,6 +47,9 @@ class BaseProfile(View):
 
         self.userform = self.context['userform']
         self.profileform = self.context['profileform']
+
+        if self.request.user.is_authenticated:
+            self.template_name = 'profiles/update.html'
 
         self.renderizar = render(
             request, self.template_name, self.context)
@@ -66,6 +69,7 @@ class Create(BaseProfile):
         first_name = self.userform.cleaned_data.get('first_name')
         last_name = self.userform.cleaned_data.get('last_name')
 
+        # if user logado!
         if request.user.is_authenticated:
             user = get_object_or_404(User, username=request.user.username)
             user.username = username
@@ -78,6 +82,20 @@ class Create(BaseProfile):
             user.last_name = last_name
             user.save()
 
+            # PERFIL/OUNAO DE UM USER JA LOGADO
+            if not self.perfil:  # usuario logado mas sem perfil!
+                # profile = self.profileform.save(commit=False)
+                # profile.user = user
+                # profile.save()
+                # messages.success(self.request, 'New user created!')
+                self.profileform.cleaned_data['user'] = user
+                profile = models.UserProfile(**self.profileform.cleaned_data)
+                profile.save()
+            else:  # para atualizar!
+                profile = self.profileform.save(commit=True)
+                profile.user = user  # so para garantir
+                profile.save()
+
         else:
             user = self.userform.save(commit=False)
             user.set_password(password)
@@ -88,18 +106,21 @@ class Create(BaseProfile):
             profile.save()
             messages.success(self.request, 'New user created!')
 
+        # para torcar o id de sessao e passar o id para a proxima sessao
+        if password:
+            autentica = authenticate(
+                self.request, username=user.username, password=password)
+
+            if autentica:  # loga o usuario apos alterar a senha
+                login(self.request, user=user)
+
         self.request.session['cart'] = self.cart
         self.request.session.save()
         return self.renderizar
 
 
-class Update(BaseProfile):
+class Update(BaseProfile):  # made in create!
     def post(self, *args: Any, **kwargs: Any):
-        form = self.context["userform"]
-        if form.is_valid():  # true if all validations are passed!
-            new_user = form.save(commit=False)  # commit dont allow saving!
-            new_user.save()
-            messages.success(self.request, 'User updated!')
 
         return self.renderizar
 
