@@ -64,6 +64,8 @@ class BaseProfile(View):
 class Create(BaseProfile):
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any):
         if not self.userform.is_valid() or not self.profileform.is_valid():
+            messages.error(
+                self.request, 'Error in forms. Check all the fields.')
             return self.renderizar
         print("ENTREIIIIIIIIIIIIII - so dps de dados enviaddos no forms!")
         username = self.userform.cleaned_data.get('username')
@@ -122,7 +124,7 @@ class Create(BaseProfile):
         messages.success(self.request, f'{user} created/updated sucessfully!')
         messages.success(self.request, f'{user} login sucessfully!')
         # para recarregar simplesmente a pagina sem confirmar reenvio do forms
-        return redirect('profiles:create')
+        return redirect('product:cart')
 
 
 class Update(BaseProfile):  # made in create!

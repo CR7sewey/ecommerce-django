@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load omfilters %}
+{% block content %}
+        <div class="row mb-5">
+            <div class="col-lg">
+                <h2>Your purchase in a nutshell</h2>
+
+                <p class="lead">{{request.user.username}} data</p>
+                <p>To edit your data, <a href="{% url "profiles:create" %}">CLICK HERE!</a></p>
+                <dl class="row">
+                    <dt class="col-lg-2">Name:</dt>
+                    <dd class="col-lg-4">{{user.first_name}}</dd>
+                    <dt class="col-lg-2">Surname:</dt>
+                    <dd class="col-lg-4">{{user.last_name}}</dd>
+
+                    <dt class="col-lg-2">Age:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.age}}</dd>
+                    <dt class="col-lg-2">Birth date:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.birth_date}}</dd>
+
+                    <dt class="col-lg-2">CC:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.cc}}</dd>
+                    <dt class="col-lg-2">E-mail:</dt>
+                    <dd class="col-lg-4">{{user.email}}</dd>
+                </dl>
+
+                <p class="lead">Address</p>
+                <p>To edit your data, <a href="{% url "profiles:create" %}">CLICK HERE!</a></p>
+                <dl class="row">
+                    <dt class="col-lg-2">Address:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.address}}</dd>
+                    <dt class="col-lg-2">Number:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.number}}</dd>
+
+                    <dt class="col-lg-2">Complement:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.complement}}</dd>
+                    <dt class="col-lg-2">Birth date:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.birth_date}}</dd>
+
+                    <dt class="col-lg-2">City:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.city}}</dd>
+                    <dt class="col-lg-2">State:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.district}}</dd>
+
+                    <dt class="col-lg-2">CC:</dt>
+                    <dd class="col-lg-4">{{user.userprofile.cc}}</dd>
+                </dl>
+            </div>
+        </div>
+
+
+        {% if cart %}
+        <div class="row mt-3">
+            <div class="col">
+                <h3>Cart</h3>
+                <p class="lead">Products, quantities and prices.</p>
+
+                {% include "product/partials/_cart.html" %}
+            </div>
+        </div>
+
+
+        <div class="row mt-3">
+            <div class="col">
+                <p class="lead text-center"><span class="font-weight-bold">Total:</span> {{cart|cart_totals}}</p>
+            </div>
+        </div>        
+
+        <div class="row">
+            <div class="col">
+                <a class="btn btn-block btn-primary btn-lg" href="{% url "order:pay" %}">
+                    Order and pay
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+
+{% endblock %}

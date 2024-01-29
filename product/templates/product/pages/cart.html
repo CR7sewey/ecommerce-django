@@ -9,48 +9,7 @@
                 <h3>Shopping Cart</h3>
                 <p class="lead">Products, quantities and prices that you have chosen!</p>
 
-                <div class="table-responsive">
-                    <table class="table">
-                        <tr>
-                            <th class="d-none d-lg-block">Imagem</th>
-                            <th>Product</th>
-                            <th>Type</th>
-                            <th>QTD.</th>
-                            <th>Total</th>
-                        </tr>
-
-                        {% for linha in cart.values %}
-                        <tr>
-                            <td class="d-none d-lg-block">
-                                <img class="cart-img" src="{% get_media_prefix %}{{ linha.image }}">
-                            </td>
-                            <td>
-                                <a href="{% url 'product:detail' linha.slug %}">
-                                    {{ linha.product_name }}
-                                </a>
-                                {% comment "" %}ao por o vid assim é get em vez de kwargs nas views!{% endcomment %}
-                                <a class="ml-3" href="{% url 'product:removefromcart' %}?vid={{ linha.variation_id }}">
-                                    <button type="submit">
-                                    <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
-                                </button>
-
-                                </a>
-                            </td>
-                            <td>{{ linha.variation_name }}</td>
-                            
-                            {% if linha.price_quantity_promotion %}
-                            <td>{{ linha.quantity }} x {{ linha.price_unique_promotion|formata_preco }}</td>
-                            <td>{{ linha.price_quantity_promotion|formata_preco }}</td>
-                            {% else %}
-                            <td>{{ linha.quantity }} x {{ linha.price_unique|formata_preco }}</td>
-                            <td>{{ linha.price_quantity|formata_preco }}</td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-
-
-                    </table>
-                </div>
+                {% include "product/partials/_cart.html" %}
             </div>
         </div>
 
@@ -70,9 +29,15 @@
                 </div>
             </div>
             <div class="col-lg mt-auto">
-                <a class="btn btn-lg btn-block btn-primary" href="#">
-                    Finalizar a compra
+                {% if request.user.is_authenticated %}
+                <a class="btn btn-lg btn-block btn-primary" href="{% url "product:resume" %}">
+                    Purchase 
                 </a>
+                {% else %}
+                <a class="btn btn-lg btn-block btn-primary" href="{% url "profiles:create" %}">
+                    Login or Register
+                </a>
+                {% endif %}
             </div>
         </div>
 

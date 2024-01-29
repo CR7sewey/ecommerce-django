@@ -163,5 +163,12 @@ class Cart(View):
 
 
 class Resume(View):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+
+    def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not self.request.user.is_authenticated:
+            return redirect("profiles:create")
+
+        context = {'user': self.request.user,
+                   'cart': self.request.session.get('cart', {})}
+        # print(self.request.session.get('cart', {}))
+        return render(self.request, 'product/pages/resume.html', context)

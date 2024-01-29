@@ -7,7 +7,6 @@ from orders.models import Order, ItemOrder
 
 
 class Pay(View):
-
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return HttpResponse('pagar')
 
