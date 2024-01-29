@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic import ListView
 from django.views import View
 from django.http import HttpRequest, HttpResponse
@@ -7,8 +7,11 @@ from . import models
 from . import forms
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 import copy
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib import auth
 
 # Create your views here.
 
@@ -60,7 +63,7 @@ class BaseProfile(View):
 
 class Create(BaseProfile):
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any):
-        if not self.userform.is_valid():  # or not self.profileform.is_valid()
+        if not self.userform.is_valid() or not self.profileform.is_valid():
             return self.renderizar
         print("ENTREIIIIIIIIIIIIII - so dps de dados enviaddos no forms!")
         username = self.userform.cleaned_data.get('username')
@@ -104,7 +107,7 @@ class Create(BaseProfile):
             profile = self.profileform.save(commit=False)
             profile.user = user
             profile.save()
-            messages.success(self.request, 'New user created!')
+            # messages.success(self.request, 'New user created!')
 
         # para torcar o id de sessao e passar o id para a proxima sessao
         if password:
@@ -116,7 +119,10 @@ class Create(BaseProfile):
 
         self.request.session['cart'] = self.cart
         self.request.session.save()
-        return self.renderizar
+        messages.success(self.request, f'{user} created/updated sucessfully!')
+        messages.success(self.request, f'{user} login sucessfully!')
+        # para recarregar simplesmente a pagina sem confirmar reenvio do forms
+        return redirect('profiles:create')
 
 
 class Update(BaseProfile):  # made in create!
@@ -126,10 +132,29 @@ class Update(BaseProfile):  # made in create!
 
 
 class Login(View):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any):
+        # form = AuthenticationForm(request, data=request.POST)
+        username = self.request.POST.get('username', '')
+        password = self.request.POST.get('password', '')
+        user = authenticate(
+            self.request, username=username, password=password)
+
+        if user:
+            # user = form.get_user()
+            login(request, user=user)
+            messages.success(request, 'Login sucessful')
+            return redirect('product:cart')
+
+        messages.error(request, 'Login unsucessful. User or password invalid!')
+        return redirect('profiles:create')
 
 
 class Logout(View):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+    def get(self, *args: Any, **kwargs: Any):
+        cart = copy.deepcopy(self.request.session.get('cart', {}))
+        logout(self.request)
+        # para nao perder o carro de compras!
+        self.request.session['cart'] = cart
+        self.request.session.save()
+        # messages.success(self.request, f'{user} logout sucessfully!')
+        return redirect('product:lista')
