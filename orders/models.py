@@ -16,8 +16,8 @@ class Order(models.Model):
         # para relacao invertida/inversa - user.post_set.all() -> user.post_create_by.QUERYSET!
         related_name='user_order'
     )
-
-    total = models.FloatField(verbose_name="Total")
+    total = models.FloatField()
+    qtd_total = models.PositiveIntegerField()
     status = models.CharField(
         default='C',
         max_length=1,
