@@ -1,4 +1,9 @@
 {% if is_paginated %}
+
+<div class="col mt-3 mb-3">
+    <div class="row">
+
+
 <div class="pagination">
     <ul class="pagination">
         {% if page_obj.has_previous %}
@@ -33,5 +38,7 @@
         </li>
         {% endif %}
     </ul>
+</div>
+</div>
 </div>
 {% endif %}

@@ -29,3 +29,9 @@ session - cookies, no lado do servidor (BD) em formato json, unico para cada usu
 
 9º
 para o crispyforms - https://pypi.org/project/crispy-bootstrap4/
+
+10º muitos muitos commits pelo makemigrations
+mas em geral ta feito!
+posso meter calculo de taxa, cupoes de desconto, adicionar uma forma especifica de pagamento
+usar p ex. um api rest para mandar notificacao no servidor e gerar um token, colocar no pedido e dps de pago alterar o status
+usar exemplo das notificacoes da proprias empresas que tem servicoes de pagamento

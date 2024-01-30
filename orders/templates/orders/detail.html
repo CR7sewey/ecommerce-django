@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load omfilters %}
+{% block content %}
+
+        <div class="row">
+            <div class="col">
+                <h3>Order N. {{order.id}}</h3>
+
+                <div class="row mt-4">
+                    <div class="col-lg-2 font-weight-bold">Order number:</div>
+                    <div class="col-lg-4">{{order.id}}</div>
+                    <div class="col-lg-2 font-weight-bold">Total:</div>
+                    <div class="col-lg-4">{{order.total|formata_preco}}</div>
+
+                    <div class="col-lg-2 font-weight-bold">Quantity:</div>
+                    <div class="col-lg-4">{{order.qtd_total}}</div>
+                    <div class="col-lg-2 font-weight-bold">Status:</div>
+                    <div class="col-lg-4">{{order.get_status_display}}</div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col">
+                        <h3>Products</h3>
+                    </div>
+                </div>
+
+                {% include "orders/partials/_cart.html" %}
+
+
+
+
+            </div>
+        </div>
+    
+{% endblock content %}

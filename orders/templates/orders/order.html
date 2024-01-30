@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load omfilters %}
+{% block content %}
+
+        <div class="row">
+            <div class="col">
+                <h3 class="mb-4">Orders of {{user.username}}</h3>
+                <p>Bellow are all the order realised in the store.</p>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tr>
+                            <th scope="col">Order</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Qtd.</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">More details</th>
+                        </tr>
+
+                        {% for order_i in order %}
+                        <tr>
+                            <th scope="row">Order N. {{order_i.id}}</td>
+                            <td>{{order_i.total|formata_preco}}</td>
+                            <td>{{order_i.qtd_total}}</td>
+                            <td>{{order_i.get_status_display}}</td>
+                            <td>
+                                <a href="{% url "order:detail" order_i.pk %}">
+                                    Check <i class="fas fa-search-plus ml-2"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                      
+                    </table>
+                </div>
+            </div>
+        </div>
+
+{% endblock content %}

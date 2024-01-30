@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
 from django.http import HttpResponse, HttpRequest, HttpResponse as HttpResponse
@@ -8,16 +8,24 @@ from django.contrib import messages
 from product.models import Variation, Product
 from orders.models import Order, ItemOrder
 from utils import omfilters
+from django.urls import reverse
 
 
-class DispatchLoginRequired(View):  # para onde pagina esta indo
+class DispatchLoginRequiredMixin(View):  # para onde pagina esta indo
     def dispatch(self, *args: Any, **kwargs: Any) -> HttpResponse:
         if not self.request.user.is_authenticated:  # obriga a tar logado para ter acesso ao pagar!!!!
             return redirect('profile:create')
         return super().dispatch(self.request, *args, **kwargs)
 
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        # para so o proprio user ter accso ao seu pagamento
+        queryset = queryset.filter(user=self.request.user)
 
-class Pay(DispatchLoginRequired, DetailView):
+        return queryset
+
+
+class Pay(DispatchLoginRequiredMixin, DetailView):
     template_name = 'orders/pay.html'
     model = Order
     pk_url_kwarg = 'pk'
@@ -26,12 +34,6 @@ class Pay(DispatchLoginRequired, DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         return context
-
-    def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs)
-        # para so o proprio user ter accso ao seu pagamento
-        queryset = queryset.filter(user=self.request.user)
-        return queryset
 
 
 class SaveOrder(View):
@@ -111,11 +113,40 @@ class SaveOrder(View):
         return redirect(reverse("order:pay", kwargs={'pk': order.pk, }))
 
 
-class Detail(View):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+class Detail(DetailView):
+    template_name = 'orders/detail.html'
+    model = Order
+    pk_url_kwarg = 'pk'  # vais buscar ao kwargs o pk que vem do url
+    context_object_name = 'order'
+
+    # def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
+    #    return render(self.request, self.template_name)
+
+    # def get_queryset(self, *args, **kwargs):
+    #    queryset = super().get_queryset(*args, **kwargs)
+    #    # para so o proprio user ter accso ao seu pagamento
+    #    id_url = kwargs.get('pk')
+    #    queryset = queryset.filter(pk=id_url, user=self.request.user)
+
+    #   return queryset
 
 
-class ListOrder(View):
-    def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('Lista')
+class ListOrder(DispatchLoginRequiredMixin, ListView):
+    model = Order  # model a carregar
+    template_name = 'orders/order.html'  # template a renderizar
+    # name with objects - in index is page_obj, aqui colide com o paginator
+    context_object_name = 'order'
+    paginate_by = 9
+    ordering = '-id',
+
+    # def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
+    #    print(self.queryset)
+    #    return render(self.request, self.template_name)
+
+    # se quiser mexer no contexto
+
+    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    #     context = super().get_context_data(**kwargs)
+    #     context.update({"user": self.request.user,
+    #                     }) nao fazer pq isto nao sei se muda o user mas tira os pedidos
+    #     return context
