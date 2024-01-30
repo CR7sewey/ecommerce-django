@@ -4,9 +4,9 @@ from orders import views
 app_name = "order"
 
 urlpatterns = [
-    path("pay/", views.Pay.as_view(), name="pay"),
+    path("pay/<int:pk>", views.Pay.as_view(), name="pay"),
     path("saveorder/", views.SaveOrder.as_view(), name="saveorder"),
     path("listorder/", views.ListOrder.as_view(), name="listorder"),
-    path("detail/<int:pk>", views.Detail.as_view(), name="detail"),
+    path("detail", views.Detail.as_view(), name="detail"),
 
 ]

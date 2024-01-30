@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.views import View
-from django.views.generic import ListView
-from django.http import HttpResponse, HttpRequest
+from django.views.generic import ListView, DetailView
+from django.http import HttpResponse, HttpRequest, HttpResponse as HttpResponse
 from typing import Any
 from orders.models import Order, ItemOrder
 from django.contrib import messages
@@ -10,7 +10,31 @@ from orders.models import Order, ItemOrder
 from utils import omfilters
 
 
-class Pay(View):
+class DispatchLoginRequired(View):  # para onde pagina esta indo
+    def dispatch(self, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not self.request.user.is_authenticated:  # obriga a tar logado para ter acesso ao pagar!!!!
+            return redirect('profile:create')
+        return super().dispatch(self.request, *args, **kwargs)
+
+
+class Pay(DispatchLoginRequired, DetailView):
+    template_name = 'orders/pay.html'
+    model = Order
+    pk_url_kwarg = 'pk'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        # para so o proprio user ter accso ao seu pagamento
+        queryset = queryset.filter(user=self.request.user)
+        return queryset
+
+
+class SaveOrder(View):
     template_name = 'orders/pay.html'
 
     def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -84,12 +108,7 @@ class Pay(View):
         del self.request.session['cart']
 
         # renderizar = render(self.request, self.template_name, context)
-        return redirect('order:listorder')
-
-
-class SaveOrder(View):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return HttpResponse('pagar')
+        return redirect(reverse("order:pay", kwargs={'pk': order.pk, }))
 
 
 class Detail(View):
