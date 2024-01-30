@@ -1,15 +1,15 @@
+from urllib import request
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.list import ListView
 from django.views import View
 from product.models import Product, Variation
-from django.core.paginator import Paginator
 from django.views.generic.detail import DetailView
 from django.http import HttpResponse, HttpRequest
 from typing import Any
 from django.db.models.query import QuerySet
 from django.contrib import messages
-from pprint import pprint
 from django.urls import reverse
+from profiles.models import UserProfile
 # Create your views here.
 
 # Create your views here.
@@ -167,6 +167,23 @@ class Resume(View):
     def get(self, *args: Any, **kwargs: Any) -> HttpResponse:
         if not self.request.user.is_authenticated:
             return redirect("profiles:create")
+
+        profile = UserProfile.objects.filter(user=self.request.user).exists()
+        # verify if exists profile, um utilizador normal é obrigado a ter perfil
+        # mas para os admin nao! assim garatne
+        if not profile:
+            messages.info(
+                self.request, 'You need to create a profile in order \
+                      to purchase!')
+            return redirect("profiles:create")
+
+        # para alguem nao conseguir ver resume se meter diretamente o url na web
+        # se nao tiver carrinho
+        if not self.request.session.get('cart', {}):
+            messages.info(
+                self.request, 'You need to add something to cart \
+                    to see resume!')
+            return redirect("product:lista")
 
         context = {'user': self.request.user,
                    'cart': self.request.session.get('cart', {})}
