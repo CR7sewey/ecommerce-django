@@ -13,5 +13,7 @@ urlpatterns = [
          name="cart"),
     path("resume/", views.Resume.as_view(), name="resume"),
 
+    # Search
+    path("search/", views.SearchProducts.as_view(), name='search'),
 
 ]

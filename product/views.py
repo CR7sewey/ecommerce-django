@@ -10,6 +10,7 @@ from django.db.models.query import QuerySet
 from django.contrib import messages
 from django.urls import reverse
 from profiles.models import UserProfile
+from django.db.models import Q  # or
 # Create your views here.
 
 # Create your views here.
@@ -189,3 +190,38 @@ class Resume(View):
                    'cart': self.request.session.get('cart', {})}
         # print(self.request.session.get('cart', {}))
         return render(self.request, 'product/pages/resume.html', context)
+
+
+class SearchProducts(ListProducts):
+    # def __init__(self, **kwargs: Any) -> None:
+    #   super().__init__(**kwargs)
+    #   self._searched_value = ''
+
+    # def setup(self, request, *args: Any, **kwargs: Any) -> None:
+    #   self._searched_value = request.GET.get('search', '').strip()
+    #   return super().setup(request, *args, **kwargs)
+
+    # def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    # tudo o passado via url esta no kwargs
+    #    print("xe")
+    # if self._searched_value == '':
+    #    return redirect('product:lista')
+
+    # return super().get(request, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs) -> QuerySet[Any]:
+        searched_value = self.request.GET.get(
+            'search', self.request.session['searched_value']).strip()
+        queryset = super().get_queryset(*args, **kwargs)
+
+        if not searched_value:
+            return queryset
+
+        # criei sessao para nao mexer na paginacao pq esta a perder o termo search quando mudo!
+        self.request.session['searched_value'] = searched_value
+
+        queryset = queryset.filter(Q(name__icontains=searched_value) |
+                                   Q(short_description__icontains=searched_value) |
+                                   Q(long_description__icontains=searched_value))
+        self.request.session.save()
+        return queryset
