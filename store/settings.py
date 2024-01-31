@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
 
     # TODO: REMOVER DEBUG TOOLBAR
-    "debug_toolbar",
+    # "debug_toolbar",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
@@ -62,9 +62,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #    'crispy_forms',
     # TODO: REMOVER DEBUG TOOLBAR
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "store.urls"
@@ -173,9 +172,10 @@ SESSION_SAVE_EVERY_REQUEST = False
 # SESSION_ENGINE = "django.contrib.sessions.backends.file"
 # SESSION_FILE_PATH = '/home/miguel/Desktop/temp' - por a diretoria
 
-# TODO: REMOVER DEBUG TOOLBAR
+"""
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
     # ...
 ]
+"""

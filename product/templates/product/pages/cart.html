@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load omfilters %}
 {% load static %}
+{% block title %}Cart ({{user.username}}) | {% endblock title %}
 {% block content %}
 {% if request.session.cart %}
     <main class="container mt-4 mb-4">
