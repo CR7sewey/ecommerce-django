@@ -44,6 +44,16 @@ class UserProfile(models.Model):
     # antes de fazer save faz este clean
     def clean(self) -> None:
         error_messages = {}
+
+        cc_enviado = self.cc or None
+        cc_save = None
+        profile = UserProfile.objects.filter(cc=cc_enviado).first()
+        if profile:  # funciona tanto no admin como no site
+            cc_save = profile.cc
+            # se existe cpf na bd e de um perfil diferente, pq senao pode ser so a atualizar!
+            if cc_save is not None and self.pk != profile.pk:
+                error_messages['cc'] = 'Invalid cc!'
+
         val = valida_cc(self.cc)
         if not val:
             error_messages['cc'] = 'Invalid cc!'
@@ -54,7 +64,7 @@ class UserProfile(models.Model):
         if error_messages:
             raise ValidationError(error_messages)
 
-        return super().clean()
+        # return super().clean()
 
     def __str__(self) -> str:
         if self.user.first_name:
